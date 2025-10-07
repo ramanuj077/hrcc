@@ -3,25 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Quote Generator</title>
+    <title>QuoteHub - Random Quote Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #3498db;
+            --primary-dark: #2980b9;
             --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
             --background-color: #f9f9f9;
             --text-color: #333;
             --card-color: #fff;
             --shadow-color: rgba(0, 0, 0, 0.1);
+            --footer-bg: #2c3e50;
+            --footer-text: #ecf0f1;
             --transition: all 0.3s ease;
         }
 
         .dark-mode {
             --primary-color: #3498db;
+            --primary-dark: #2980b9;
             --secondary-color: #ecf0f1;
+            --accent-color: #e74c3c;
             --background-color: #1a1a2e;
             --text-color: #e6e6e6;
             --card-color: #16213e;
             --shadow-color: rgba(0, 0, 0, 0.3);
+            --footer-bg: #0f3460;
+            --footer-text: #e6e6e6;
         }
 
         * {
@@ -36,45 +45,108 @@
             color: var(--text-color);
             line-height: 1.6;
             min-height: 100vh;
-            padding: 20px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
             transition: var(--transition);
         }
 
-        .container {
-            max-width: 800px;
-            width: 100%;
-            margin: 0 auto;
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px var(--shadow-color);
         }
 
-        header {
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .hero {
             text-align: center;
             margin-bottom: 30px;
         }
 
-        h1 {
+        .hero h2 {
+            font-size: 2.2rem;
             color: var(--primary-color);
             margin-bottom: 10px;
-            font-size: 2.5rem;
         }
 
-        .subtitle {
+        .hero p {
+            font-size: 1.2rem;
             color: var(--secondary-color);
-            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .card {
             background-color: var(--card-color);
-            border-radius: 10px;
+            border-radius: 15px;
             box-shadow: 0 5px 15px var(--shadow-color);
             padding: 30px;
-            margin-bottom: 30px;
             text-align: center;
             position: relative;
             overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px var(--shadow-color);
         }
 
         .quote-container {
@@ -126,7 +198,7 @@
             color: white;
             border: none;
             padding: 12px 25px;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 1rem;
             font-weight: 600;
@@ -137,6 +209,7 @@
         }
 
         button:hover {
+            background-color: var(--primary-dark);
             transform: translateY(-2px);
             box-shadow: 0 5px 10px var(--shadow-color);
         }
@@ -149,6 +222,10 @@
             background-color: var(--secondary-color);
         }
 
+        button.secondary:hover {
+            background-color: #34495e;
+        }
+
         button:disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -157,10 +234,15 @@
 
         .history-container {
             background-color: var(--card-color);
-            border-radius: 10px;
+            border-radius: 15px;
             box-shadow: 0 5px 15px var(--shadow-color);
             padding: 30px;
-            margin-bottom: 30px;
+            transition: var(--transition);
+        }
+
+        .history-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px var(--shadow-color);
         }
 
         .history-header {
@@ -181,6 +263,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: var(--transition);
+        }
+
+        .history-item:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+            border-radius: 8px;
         }
 
         .history-item:last-child {
@@ -210,9 +298,6 @@
         }
 
         .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
             background-color: var(--card-color);
             border-radius: 50%;
             width: 50px;
@@ -222,7 +307,11 @@
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 2px 10px var(--shadow-color);
-            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(15deg);
         }
 
         .loading {
@@ -282,11 +371,138 @@
             border-left: 4px solid #e74c3c;
         }
 
+        .api-info {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 3px 10px var(--shadow-color);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .footer-section p {
+            margin-bottom: 15px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: var(--footer-text);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: var(--footer-text);
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
         @media (max-width: 768px) {
-            .container {
-                padding: 0 15px;
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
             }
-            
+
+            .nav-links {
+                gap: 10px;
+            }
+
+            .hero h2 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
             .card {
                 padding: 20px;
             }
@@ -315,50 +531,137 @@
                 width: 100%;
                 justify-content: flex-end;
             }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="theme-toggle" id="themeToggle">
-        <span id="themeIcon">🌙</span>
-    </div>
-
-    <div class="container">
-        <header>
-            <h1>Random Quote Generator</h1>
-            <p class="subtitle">Get inspired with wisdom from around the world</p>
-        </header>
-
-        <div class="card">
-            <div class="quote-container" id="quoteContainer">
-                <div class="setup" id="setup">Click "New Quote" to get started!</div>
-                <div class="quote hidden" id="quote"></div>
-                <div class="author hidden" id="author"></div>
-                <div class="error-message hidden" id="errorMessage"></div>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-quote-left"></i>
+                <h1>QuoteHub</h1>
             </div>
-            <div class="controls">
-                <button id="newQuoteBtn">
-                    <span>New Quote</span>
-                </button>
-                <button id="revealBtn" class="secondary" disabled>
-                    <span>Reveal Quote</span>
-                </button>
-                <button id="copyBtn" class="secondary" disabled>
-                    <span>Copy Quote</span>
-                </button>
+            <nav class="nav-links">
+                <a href="index.html"><i class="fas fa-home"></i> Home</a>
+                <a href="index.html"><i class="fas fa-history"></i> History</a>
+                <a href="index.html"><i class="fas fa-info-circle"></i> About</a>
+                <a href="index.html"><i class="fas fa-envelope"></i> Contact</a>
+            </nav>
+            <div class="theme-toggle" id="themeToggle">
+                <span id="themeIcon">🌙</span>
             </div>
         </div>
+    </header>
 
-        <div class="history-container">
-            <div class="history-header">
-                <h2>Quote History</h2>
-                <button id="clearHistoryBtn" class="secondary">Clear History</button>
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <section class="hero">
+                <h2>Discover Wisdom in Every Word</h2>
+                <p>Get inspired with random quotes from famous authors, thinkers, and leaders from around the world.</p>
+            </section>
+
+            <section class="card">
+                <div class="quote-container" id="quoteContainer">
+                    <div class="setup" id="setup">Click "New Quote" to get started!</div>
+                    <div class="quote hidden" id="quote"></div>
+                    <div class="author hidden" id="author"></div>
+                    <div class="error-message hidden" id="errorMessage"></div>
+                </div>
+                <div class="controls">
+                    <button id="newQuoteBtn">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>New Quote</span>
+                    </button>
+                    <button id="revealBtn" class="secondary" disabled>
+                        <i class="fas fa-eye"></i>
+                        <span>Reveal Quote</span>
+                    </button>
+                    <button id="copyBtn" class="secondary" disabled>
+                        <i class="fas fa-copy"></i>
+                        <span>Copy Quote</span>
+                    </button>
+                </div>
+            
+            </section>
+
+            <section class="history-container">
+                <div class="history-header">
+                    <h2><i class="fas fa-history"></i> Quote History</h2>
+                    <button id="clearHistoryBtn" class="secondary">
+                        <i class="fas fa-trash"></i>
+                        Clear History
+                    </button>
+                </div>
+                <div class="history-list" id="historyList">
+                    <!-- History items will be added here -->
+                </div>
+            </section>
+
+            <section class="features">
+                <div class="feature-card">
+                    <i class="fas fa-brain"></i>
+                    <h3>Daily Inspiration</h3>
+                    <p>Get a fresh dose of motivation with every click</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-palette"></i>
+                    <h3>Beautiful Design</h3>
+                    <p>Enjoy a clean, modern interface with dark mode</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-share-alt"></i>
+                    <h3>Easy Sharing</h3>
+                    <p>Copy your favorite quotes with one click</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-history"></i>
+                    <h3>Quote History</h3>
+                    <p>Never lose track of your favorite quotes</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About QuoteHub</h3>
+                <p>QuoteHub is a free platform that provides random inspirational quotes from famous authors, thinkers, and leaders to motivate and inspire your day.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                </div>
             </div>
-            <div class="history-list" id="historyList">
-                <!-- History items will be added here -->
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html"><i class="fas fa-chevron-right"></i> Home</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Potheri Street, Chennai</p>
+                <p><i class="fas fa-envelope"></i> contact@quotehub.com</p>
+                <p><i class="fas fa-phone"></i> +91 9556278237</p>
             </div>
         </div>
-    </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 QuoteHub - Ramanuj HRCC. All rights reserved. | Designed with <i class="fas fa-heart" style="color: #e74c3c;"></i> for HRCC</p>
+        </div>
+    </footer>
 
     <div class="toast" id="toast"></div>
 
@@ -377,6 +680,10 @@
             const themeToggle = document.getElementById('themeToggle');
             const themeIcon = document.getElementById('themeIcon');
             const toast = document.getElementById('toast');
+            
+            // API Configuration
+            const API_KEY = 'RH+dIHuG0NBSSisO6MefVQ==OYzYIwroObQJlf7Y';
+            const API_URL = 'https://api.api-ninjas.com/v1/quotes';
             
             // State variables
             let currentQuote = null;
@@ -410,17 +717,29 @@
                     // Hide any previous errors
                     errorMessage.classList.add('hidden');
                     
-                    // Fetch from Quotable API
-                    const response = await fetch('https://api.adviceslip.com/advice');
+                    // Fetch from API Ninjas
+                    const response = await fetch(API_URL, {
+                        method: 'GET',
+                        headers: {
+                            'X-Api-Key': API_KEY,
+                            'Content-Type': 'application/json'
+                        }
+                    });
                     
                     if (!response.ok) {
-                        throw new Error(`API error: ${response.status}`);
+                        throw new Error(`API error: ${response.status} - ${response.statusText}`);
                     }
                     
-                    const quoteData = await response.json();
+                    const data = await response.json();
+                    
+                    if (!data || data.length === 0) {
+                        throw new Error('No quotes found');
+                    }
+                    
+                    const quoteData = data[0]; // API returns array with one quote
                     
                     currentQuote = {
-                        content: quoteData.content,
+                        content: quoteData.quote,
                         author: quoteData.author,
                         date: new Date().toLocaleDateString()
                     };
@@ -429,16 +748,16 @@
                     displaySetup(currentQuote.content);
                     
                     // Reset button
-                    newQuoteBtn.innerHTML = '<span>New Quote</span>';
+                    newQuoteBtn.innerHTML = '<i class="fas fa-sync-alt"></i><span>New Quote</span>';
                     newQuoteBtn.disabled = false;
                     revealBtn.disabled = false;
                     
                 } catch (error) {
                     console.error('Error fetching quote:', error);
-                    showError('Failed to fetch quote  try again.');
+                    showError(`Failed to fetch quote: ${error.message}. Please check your internet connection.`);
                     
                     // Reset button
-                    newQuoteBtn.innerHTML = '<span>New Quote</span>';
+                    newQuoteBtn.innerHTML = '<i class="fas fa-sync-alt"></i><span>New Quote</span>';
                     newQuoteBtn.disabled = false;
                 }
             }
@@ -457,7 +776,7 @@
                 setupElement.classList.remove('hidden');
                 
                 // Reset reveal button
-                revealBtn.innerHTML = '<span>Reveal Quote</span>';
+                revealBtn.innerHTML = '<i class="fas fa-eye"></i><span>Reveal Quote</span>';
                 revealBtn.disabled = false;
                 copyBtn.disabled = true;
             }
@@ -486,13 +805,13 @@
                     
                     if (!isDuplicate) {
                         quoteHistory.unshift({...currentQuote});
-                        if (quoteHistory.length > 10) quoteHistory.pop(); // Keep only last 10
+                        if (quoteHistory.length > 15) quoteHistory.pop(); // Keep only last 15
                         localStorage.setItem('quoteHistory', JSON.stringify(quoteHistory));
                         renderHistory();
                     }
                     
                     // Update buttons
-                    revealBtn.innerHTML = '<span>Quote Revealed</span>';
+                    revealBtn.innerHTML = '<i class="fas fa-check"></i><span>Quote Revealed</span>';
                     revealBtn.disabled = true;
                     copyBtn.disabled = false;
                 }, 500);
@@ -521,7 +840,7 @@
                 historyList.innerHTML = '';
                 
                 if (quoteHistory.length === 0) {
-                    historyList.innerHTML = '<p style="text-align: center; padding: 20px;">No quote history yet</p>';
+                    historyList.innerHTML = '<p style="text-align: center; padding: 20px;">No quote history yet. Generate some quotes to see them here!</p>';
                     return;
                 }
                 
@@ -534,8 +853,12 @@
                         <div class="history-quote">"${quote.content}"</div>
                         <div class="history-author">- ${quote.author}</div>
                         <div class="history-actions">
-                            <button class="secondary copy-history" data-quote="${quote.content}" data-author="${quote.author}">Copy</button>
-                            <button class="secondary view-history" data-quote="${quote.content}" data-author="${quote.author}">View</button>
+                            <button class="secondary copy-history" data-quote="${quote.content}" data-author="${quote.author}">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                            <button class="secondary view-history" data-quote="${quote.content}" data-author="${quote.author}">
+                                <i class="fas fa-eye"></i> View
+                            </button>
                         </div>
                     `;
                     
@@ -579,7 +902,7 @@
                         authorElement.classList.remove('hidden');
                         
                         // Update buttons
-                        revealBtn.innerHTML = '<span>Quote Revealed</span>';
+                        revealBtn.innerHTML = '<i class="fas fa-check"></i><span>Quote Revealed</span>';
                         revealBtn.disabled = true;
                         copyBtn.disabled = false;
                     });
