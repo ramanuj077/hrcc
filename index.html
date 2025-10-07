@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Quote Generator</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --card-color: #fff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --primary-color: #3498db;
+            --secondary-color: #ecf0f1;
+            --background-color: #1a1a2e;
+            --text-color: #e6e6e6;
+            --card-color: #16213e;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-container {
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .quote {
+            font-size: 1.5rem;
+            font-style: italic;
+            margin-bottom: 20px;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .author {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+            animation-delay: 1s;
+        }
+
+        .setup {
+            font-size: 1.5rem;
+            font-style: italic;
+            margin-bottom: 20px;
+            opacity: 1;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px var(--shadow-color);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background-color: var(--secondary-color);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .history-container {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .history-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-quote {
+            flex: 1;
+            font-style: italic;
+        }
+
+        .history-author {
+            margin-left: 15px;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 10px;
+            margin-left: 15px;
+        }
+
+        .history-actions button {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--card-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            z-index: 100;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px var(--shadow-color);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin: 10px 0;
+            padding: 15px;
+            background-color: #ffeaea;
+            border-radius: 5px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .quote {
+                font-size: 1.3rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .history-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .history-actions {
+                margin-top: 10px;
+                margin-left: 0;
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle" id="themeToggle">
+        <span id="themeIcon">🌙</span>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Random Quote Generator</h1>
+            <p class="subtitle">Get inspired with wisdom from around the world</p>
+        </header>
+
+        <div class="card">
+            <div class="quote-container" id="quoteContainer">
+                <div class="setup" id="setup">Click "New Quote" to get started!</div>
+                <div class="quote hidden" id="quote"></div>
+                <div class="author hidden" id="author"></div>
+                <div class="error-message hidden" id="errorMessage"></div>
+            </div>
+            <div class="controls">
+                <button id="newQuoteBtn">
+                    <span>New Quote</span>
+                </button>
+                <button id="revealBtn" class="secondary" disabled>
+                    <span>Reveal Quote</span>
+                </button>
+                <button id="copyBtn" class="secondary" disabled>
+                    <span>Copy Quote</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="history-container">
+            <div class="history-header">
+                <h2>Quote History</h2>
+                <button id="clearHistoryBtn" class="secondary">Clear History</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <!-- History items will be added here -->
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const setupElement = document.getElementById('setup');
+            const quoteElement = document.getElementById('quote');
+            const authorElement = document.getElementById('author');
+            const errorMessage = document.getElementById('errorMessage');
+            const newQuoteBtn = document.getElementById('newQuoteBtn');
+            const revealBtn = document.getElementById('revealBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+            const historyList = document.getElementById('historyList');
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const toast = document.getElementById('toast');
+            
+            // State variables
+            let currentQuote = null;
+            let quoteHistory = JSON.parse(localStorage.getItem('quoteHistory')) || [];
+            let isDarkMode = localStorage.getItem('darkMode') === 'true';
+            
+            // Initialize
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                themeIcon.textContent = '☀️';
+            }
+            
+            renderHistory();
+            
+            // Event Listeners
+            newQuoteBtn.addEventListener('click', fetchNewQuote);
+            revealBtn.addEventListener('click', revealQuote);
+            copyBtn.addEventListener('click', copyQuote);
+            clearHistoryBtn.addEventListener('click', clearHistory);
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            // Functions
+            async function fetchNewQuote() {
+                try {
+                    // Show loading state
+                    newQuoteBtn.innerHTML = '<div class="loading"></div><span>Loading...</span>';
+                    newQuoteBtn.disabled = true;
+                    revealBtn.disabled = true;
+                    copyBtn.disabled = true;
+                    
+                    // Hide any previous errors
+                    errorMessage.classList.add('hidden');
+                    
+                    // Fetch from Quotable API
+                    const response = await fetch('https://api.adviceslip.com/advice');
+                    
+                    if (!response.ok) {
+                        throw new Error(`API error: ${response.status}`);
+                    }
+                    
+                    const quoteData = await response.json();
+                    
+                    currentQuote = {
+                        content: quoteData.content,
+                        author: quoteData.author,
+                        date: new Date().toLocaleDateString()
+                    };
+                    
+                    // Display setup (first part of quote)
+                    displaySetup(currentQuote.content);
+                    
+                    // Reset button
+                    newQuoteBtn.innerHTML = '<span>New Quote</span>';
+                    newQuoteBtn.disabled = false;
+                    revealBtn.disabled = false;
+                    
+                } catch (error) {
+                    console.error('Error fetching quote:', error);
+                    showError('Failed to fetch quote  try again.');
+                    
+                    // Reset button
+                    newQuoteBtn.innerHTML = '<span>New Quote</span>';
+                    newQuoteBtn.disabled = false;
+                }
+            }
+            
+            function displaySetup(quoteContent) {
+                // Hide the full quote and author
+                quoteElement.classList.add('hidden');
+                authorElement.classList.add('hidden');
+                
+                // Show only the first part of the quote as setup
+                const words = quoteContent.split(' ');
+                const setupLength = Math.min(Math.floor(words.length / 2), 10);
+                const setupText = words.slice(0, setupLength).join(' ') + '...';
+                
+                setupElement.textContent = `"${setupText}"`;
+                setupElement.classList.remove('hidden');
+                
+                // Reset reveal button
+                revealBtn.innerHTML = '<span>Reveal Quote</span>';
+                revealBtn.disabled = false;
+                copyBtn.disabled = true;
+            }
+            
+            function revealQuote() {
+                if (!currentQuote) return;
+                
+                // Hide setup
+                setupElement.classList.add('hidden');
+                
+                // Show full quote with animation
+                quoteElement.textContent = `"${currentQuote.content}"`;
+                quoteElement.classList.remove('hidden');
+                quoteElement.classList.add('slide-in');
+                
+                // Show author with delay
+                setTimeout(() => {
+                    authorElement.textContent = `- ${currentQuote.author}`;
+                    authorElement.classList.remove('hidden');
+                    authorElement.classList.add('slide-in');
+                    
+                    // Add to history if not already there
+                    const isDuplicate = quoteHistory.some(
+                        item => item.content === currentQuote.content && item.author === currentQuote.author
+                    );
+                    
+                    if (!isDuplicate) {
+                        quoteHistory.unshift({...currentQuote});
+                        if (quoteHistory.length > 10) quoteHistory.pop(); // Keep only last 10
+                        localStorage.setItem('quoteHistory', JSON.stringify(quoteHistory));
+                        renderHistory();
+                    }
+                    
+                    // Update buttons
+                    revealBtn.innerHTML = '<span>Quote Revealed</span>';
+                    revealBtn.disabled = true;
+                    copyBtn.disabled = false;
+                }, 500);
+            }
+            
+            function copyQuote() {
+                if (!currentQuote) return;
+                
+                const fullQuote = `"${currentQuote.content}" - ${currentQuote.author}`;
+                navigator.clipboard.writeText(fullQuote)
+                    .then(() => {
+                        showToast('Quote copied to clipboard!');
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy: ', err);
+                        showToast('Failed to copy quote');
+                    });
+            }
+            
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.classList.remove('hidden');
+            }
+            
+            function renderHistory() {
+                historyList.innerHTML = '';
+                
+                if (quoteHistory.length === 0) {
+                    historyList.innerHTML = '<p style="text-align: center; padding: 20px;">No quote history yet</p>';
+                    return;
+                }
+                
+                quoteHistory.forEach((quote, index) => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item slide-in';
+                    historyItem.style.animationDelay = `${index * 0.1}s`;
+                    
+                    historyItem.innerHTML = `
+                        <div class="history-quote">"${quote.content}"</div>
+                        <div class="history-author">- ${quote.author}</div>
+                        <div class="history-actions">
+                            <button class="secondary copy-history" data-quote="${quote.content}" data-author="${quote.author}">Copy</button>
+                            <button class="secondary view-history" data-quote="${quote.content}" data-author="${quote.author}">View</button>
+                        </div>
+                    `;
+                    
+                    historyList.appendChild(historyItem);
+                });
+                
+                // Add event listeners to history buttons
+                document.querySelectorAll('.copy-history').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const quote = this.getAttribute('data-quote');
+                        const author = this.getAttribute('data-author');
+                        const fullQuote = `"${quote}" - ${author}`;
+                        
+                        navigator.clipboard.writeText(fullQuote)
+                            .then(() => {
+                                showToast('Quote copied to clipboard!');
+                            })
+                            .catch(err => {
+                                console.error('Failed to copy: ', err);
+                                showToast('Failed to copy quote');
+                            });
+                    });
+                });
+                
+                document.querySelectorAll('.view-history').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const quote = this.getAttribute('data-quote');
+                        const author = this.getAttribute('data-author');
+                        
+                        currentQuote = {
+                            content: quote,
+                            author: author,
+                            date: new Date().toLocaleDateString()
+                        };
+                        
+                        // Display the quote
+                        setupElement.classList.add('hidden');
+                        quoteElement.textContent = `"${currentQuote.content}"`;
+                        quoteElement.classList.remove('hidden');
+                        authorElement.textContent = `- ${currentQuote.author}`;
+                        authorElement.classList.remove('hidden');
+                        
+                        // Update buttons
+                        revealBtn.innerHTML = '<span>Quote Revealed</span>';
+                        revealBtn.disabled = true;
+                        copyBtn.disabled = false;
+                    });
+                });
+            }
+            
+            function clearHistory() {
+                quoteHistory = [];
+                localStorage.setItem('quoteHistory', JSON.stringify(quoteHistory));
+                renderHistory();
+                showToast('History cleared');
+            }
+            
+            function toggleTheme() {
+                isDarkMode = !isDarkMode;
+                document.body.classList.toggle('dark-mode', isDarkMode);
+                themeIcon.textContent = isDarkMode ? '☀️' : '🌙';
+                localStorage.setItem('darkMode', isDarkMode);
+            }
+            
+            function showToast(message) {
+                toast.textContent = message;
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
